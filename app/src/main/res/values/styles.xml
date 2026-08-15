@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calculator Button Styles -->
+    <style name="SciButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">#1a1a2e</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="NumButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_rowWeight">1</item>
+        <item name="android:background">@drawable/button_number</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <style name="OpButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/button_operator</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="EqualsButton" parent="OpButton">
+        <item name="android:background">@drawable/button_equals</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <!-- Numpad Button Style -->
+    <style name="NumpadButton">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:background">@drawable/button_numpad</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+</resources>
