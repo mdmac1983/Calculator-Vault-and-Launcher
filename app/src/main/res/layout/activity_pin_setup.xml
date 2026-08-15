@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#1a1a2e"
+    android:padding="32dp">
+
+    <TextView
+        android:id="@+id/instructionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create a PIN (4-8 digits)"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:layout_marginBottom="40dp" />
+
+    <TextView
+        android:id="@+id/pinDots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="○○○○○○○○"
+        android:textColor="#14b8a6"
+        android:textSize="32sp"
+        android:letterSpacing="0.3"
+        android:layout_marginBottom="60dp" />
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4">
+
+        <Button android:id="@+id/numpad1" android:text="1" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad2" android:text="2" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad3" android:text="3" style="@style/NumpadButton" />
+
+        <Button android:id="@+id/numpad4" android:text="4" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad5" android:text="5" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad6" android:text="6" style="@style/NumpadButton" />
+
+        <Button android:id="@+id/numpad7" android:text="7" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad8" android:text="8" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad9" android:text="9" style="@style/NumpadButton" />
+
+        <Button android:id="@+id/numpadClear" android:text="C" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpad0" android:text="0" style="@style/NumpadButton" />
+        <Button android:id="@+id/numpadBack" android:text="←" style="@style/NumpadButton" />
+    </GridLayout>
+
+    <Button
+        android:id="@+id/numpadConfirm"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="40dp"
+        android:text="Confirm"
+        android:textColor="#ffffff"
+        android:backgroundTint="#14b8a6"
+        android:textSize="18sp" />
+</LinearLayout>
