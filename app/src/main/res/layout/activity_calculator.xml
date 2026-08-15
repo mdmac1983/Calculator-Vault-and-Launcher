@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1a1a2e">
+
+    <!-- Display -->
+    <TextView
+        android:id="@+id/displayText"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:gravity="bottom|end"
+        android:padding="20dp"
+        android:text="0"
+        android:textColor="#ffffff"
+        android:textSize="48sp"
+        android:fontFamily="sans-serif-light" />
+
+    <!-- Scientific Functions -->
+    <GridLayout
+        android:id="@+id/scientificPad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="5"
+        android:background="#14b8a6">
+
+        <Button android:id="@+id/btnRad" android:text="RAD" style="@style/SciButton" />
+        <Button android:id="@+id/btnInv" android:text="INV" style="@style/SciButton" />
+        <Button android:id="@+id/btnSin" android:text="sin" style="@style/SciButton" />
+        <Button android:id="@+id/btnCos" android:text="cos" style="@style/SciButton" />
+        <Button android:id="@+id/btnTan" android:text="tan" style="@style/SciButton" />
+
+        <Button android:id="@+id/btnPercent" android:text="%" style="@style/SciButton" />
+        <Button android:id="@+id/btnLn" android:text="ln" style="@style/SciButton" />
+        <Button android:id="@+id/btnLog" android:text="log" style="@style/SciButton" />
+        <Button android:id="@+id/btnFactorial" android:text="!" style="@style/SciButton" />
+        <Button android:id="@+id/btnPower" android:text="^" style="@style/SciButton" />
+
+        <Button android:id="@+id/btnPi" android:text="π" style="@style/SciButton" />
+        <Button android:id="@+id/btnE" android:text="e" style="@style/SciButton" />
+        <Button android:id="@+id/btnLParen" android:text="(" style="@style/SciButton" />
+        <Button android:id="@+id/btnRParen" android:text=")" style="@style/SciButton" />
+        <Button android:id="@+id/btnSqrt" android:text="√" style="@style/SciButton" />
+    </GridLayout>
+
+    <!-- Main Keypad -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- Numbers -->
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:columnCount="3"
+            android:background="#1f2937">
+
+            <Button android:id="@+id/btn7" android:text="7" style="@style/NumButton" />
+            <Button android:id="@+id/btn8" android:text="8" style="@style/NumButton" />
+            <Button android:id="@+id/btn9" android:text="9" style="@style/NumButton" />
+
+            <Button android:id="@+id/btn4" android:text="4" style="@style/NumButton" />
+            <Button android:id="@+id/btn5" android:text="5" style="@style/NumButton" />
+            <Button android:id="@+id/btn6" android:text="6" style="@style/NumButton" />
+
+            <Button android:id="@+id/btn1" android:text="1" style="@style/NumButton" />
+            <Button android:id="@+id/btn2" android:text="2" style="@style/NumButton" />
+            <Button android:id="@+id/btn3" android:text="3" style="@style/NumButton" />
+
+            <Button android:id="@+id/btn0" android:text="0" style="@style/NumButton" android:layout_columnSpan="2" />
+            <Button android:id="@+id/btnDot" android:text="." style="@style/NumButton" />
+        </GridLayout>
+
+        <!-- Operators -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="#374151">
+
+            <Button android:id="@+id/btnClear" android:text="DEL" style="@style/OpButton" />
+            <Button android:id="@+id/btnDivide" android:text="÷" style="@style/OpButton" />
+            <Button android:id="@+id/btnMultiply" android:text="×" style="@style/OpButton" />
+            <Button android:id="@+id/btnMinus" android:text="-" style="@style/OpButton" />
+            <Button android:id="@+id/btnPlus" android:text="+" style="@style/OpButton" />
+            <Button android:id="@+id/btnEquals" android:text="=" style="@style/EqualsButton" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
