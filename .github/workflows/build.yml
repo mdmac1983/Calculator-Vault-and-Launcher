@@ -29,15 +29,20 @@ jobs:
       with:
         gradle-version: 8.2
         
-    - name: Clear Gradle cache
-      run: rm -rf ~/.gradle/caches
-      
+    - name: Clear ALL caches
+      run: |
+        rm -rf ~/.gradle/caches
+        rm -rf ~/.gradle/wrapper
+        rm -rf .gradle
+        rm -rf app/build
+        rm -rf build
+        
     - name: Create local.properties
       run: |
         echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
         
     - name: Clean build
-      run: gradle clean
+      run: gradle clean --no-daemon
         
     - name: Build Debug APK
       run: gradle assembleDebug --stacktrace --no-daemon
