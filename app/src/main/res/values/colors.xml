@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="teal_500">#14b8a6</color>
+    <color name="teal_700">#0d9488</color>
+    <color name="amber_500">#f59e0b</color>
+    <color name="amber_700">#d97706</color>
+    
+    <!-- Background Colors -->
+    <color name="dark_background">#0d1f33</color>
+    <color name="dark_surface">#1e3a5f</color>
+    <color name="calculator_bg">#1a1a2e</color>
+    <color name="number_pad_bg">#1f2937</color>
+    <color name="operator_pad_bg">#374151</color>
+    <color name="sci_pad_bg">#14b8a6</color>
+    
+    <!-- Text Colors -->
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray_400">#9ca3af</color>
+    <color name="gray_500">#6b7280</color>
+    <color name="gray_600">#4b5563</color>
+    <color name="gray_700">#374151</color>
+    <color name="gray_800">#1f2937</color>
+    <color name="gray_900">#111827</color>
+</resources>
