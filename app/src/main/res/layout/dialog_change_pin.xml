@@ -5,24 +5,33 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter old PIN:"
+        android:layout_marginBottom="8dp"/>
+
     <EditText
         android:id="@+id/oldPinInput"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Current PIN"
+        android:layout_height="wrap_content"
         android:inputType="numberPassword"
-        android:maxLength="8"
-        android:textColor="#000000"
-        android:textColorHint="#666666"
-        android:layout_marginBottom="16dp" />
+        android:maxLength="4"
+        android:hint="Old PIN"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter new PIN:"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
 
     <EditText
         android:id="@+id/newPinInput"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="New PIN (4-8 digits)"
+        android:layout_height="wrap_content"
         android:inputType="numberPassword"
-        android:maxLength="8"
-        android:textColor="#000000"
-        android:textColorHint="#666666" />
+        android:maxLength="4"
+        android:hint="New PIN"/>
+
 </LinearLayout>
