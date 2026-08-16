@@ -41,7 +41,7 @@ class CalculatorActivity : AppCompatActivity() {
             R.id.btn6 to "6", R.id.btn7 to "7", R.id.btn8 to "8", R.id.btn9 to "9"
         )
         
-        numberButtons.forEach { (id, value) ->
+        numberButtons.forEach { (id: Int, value: String)...}
             findViewById<Button>(id).setOnClickListener {
                 currentInput += value
                 updateDisplay()
