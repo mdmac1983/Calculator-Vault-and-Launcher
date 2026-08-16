@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Password Categories -->
+    <string-array name="password_categories">
+        <item>Website</item>
+        <item>Banking</item>
+        <item>Credit Card</item>
+        <item>Contacts</item>
+    </string-array>
+    
+    <!-- UI Themes -->
+    <string-array name="ui_themes">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>System</item>
+    </string-array>
+    
+    <!-- Icon Packs -->
+    <string-array name="icon_packs">
+        <item>Default</item>
+        <item>Rounded</item>
+        <item>Square</item>
+        <item>Minimal</item>
+    </string-array>
+    
+    <!-- Drawer Styles -->
+    <string-array name="drawer_styles">
+        <item>Frosted</item>
+        <item>MICA</item>
+        <item>Translucent</item>
+        <item>Solid</item>
+    </string-array>
+</resources>
