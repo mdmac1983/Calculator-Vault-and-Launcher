@@ -1,54 +1,52 @@
-package com.calculator.vault.fragment
+package com.calculator.vault.ui
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calculator.vault.R
-import com.calculator.vault.adapter.EventAdapter
-import com.calculator.vault.database.VaultDatabase
-import com.calculator.vault.model.CalendarEvent
+import com.calculator.vault.data.CalendarEvent
+import com.calculator.vault.data.VaultDatabase
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 class PlannerFragment : Fragment() {
     
+    private lateinit var calendarView: CalendarView
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: EventAdapter
-    private lateinit var viewTabs: TabLayout
+    private val selectedDate = Calendar.getInstance()
     
-    private var selectedDate = Calendar.getInstance()
-    
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_planner, container, false)
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        viewTabs = view.findViewById(R.id.viewTabs)
-        listOf("Day", "Week", "Month").forEach {
-            viewTabs.addTab(viewTabs.newTab().setText(it))
-        }
-        
+        calendarView = view.findViewById(R.id.calendarView)
         recyclerView = view.findViewById(R.id.eventsRecycler)
         recyclerView.layoutManager = LinearLayoutManager(context)
         
-        adapter = EventAdapter(emptyList())
-        recyclerView.adapter = adapter
+        calendarView.setOnDateChangeListener { _, year, month, day ->
+            selectedDate.set(year, month, day)
+            loadEvents()
+        }
         
-        view.findViewById<FloatingActionButton>(R.id.addEventFab).setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.fabAddEvent).setOnClickListener {
             showAddEventDialog()
         }
         
@@ -56,19 +54,26 @@ class PlannerFragment : Fragment() {
     }
     
     private fun loadEvents() {
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        val start = cal.timeInMillis
-        
-        cal.add(Calendar.DAY_OF_YEAR, 1)
-        val end = cal.timeInMillis
-        
-        VaultDatabase.getInstance(requireContext()).eventDao()
-            .getEventsBetween(start, end)
-            .observe(viewLifecycleOwner) { events ->
-                adapter.updateEvents(events)
-            }
+        lifecycleScope.launch {
+            val startOfDay = selectedDate.apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+            }.timeInMillis
+            
+            val endOfDay = selectedDate.apply {
+                set(Calendar.HOUR_OF_DAY, 23)
+                set(Calendar.MINUTE, 59)
+                set(Calendar.SECOND, 59)
+            }.timeInMillis
+            
+            val events = VaultDatabase.getInstance(requireContext())
+                .eventDao()
+                .getEventsForRange(startOfDay, endOfDay)
+            
+            adapter = EventAdapter(events)
+            recyclerView.adapter = adapter
+        }
     }
     
     private fun showAddEventDialog() {
@@ -78,18 +83,19 @@ class PlannerFragment : Fragment() {
         
         AlertDialog.Builder(requireContext())
             .setTitle("Add Event")
-            .setView(view)
+            .setView(view as android.view.View)
             .setPositiveButton("Save") { _, _ ->
                 val event = CalendarEvent(
                     title = titleInput.text.toString(),
                     description = descInput.text.toString(),
                     startTime = selectedDate.timeInMillis,
-                    endTime = selectedDate.timeInMillis + 3600000 // 1 hour
+                    endTime = selectedDate.timeInMillis + 3600000
                 )
                 
                 lifecycleScope.launch {
                     VaultDatabase.getInstance(requireContext()).eventDao().insert(event)
                     Toast.makeText(context, "Event added", Toast.LENGTH_SHORT).show()
+                    loadEvents()
                 }
             }
             .setNegativeButton("Cancel", null)
