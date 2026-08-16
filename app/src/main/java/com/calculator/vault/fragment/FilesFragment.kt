@@ -1,5 +1,7 @@
 package com.calculator.vault.fragment
 
+import com.calculator.vault.data.*
+import com.calculator.vault.adapter.*
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
