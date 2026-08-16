@@ -4,6 +4,10 @@ plugins {
     id 'kotlin-kapt'
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
 android {
     namespace 'com.calculator.vault'
     compileSdk 34
