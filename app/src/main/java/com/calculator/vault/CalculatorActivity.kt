@@ -41,7 +41,8 @@ class CalculatorActivity : AppCompatActivity() {
             R.id.btn6 to "6", R.id.btn7 to "7", R.id.btn8 to "8", R.id.btn9 to "9"
         )
         
-        numberButtons.forEach { (id: Int, value: String)...}
+        // FIXED: Added explicit types (id: Int, value: String)
+        numberButtons.forEach { (id: Int, value: String) ->
             findViewById<Button>(id).setOnClickListener {
                 currentInput += value
                 updateDisplay()
@@ -74,10 +75,11 @@ class CalculatorActivity : AppCompatActivity() {
         }
         
         // Scientific functions (for show)
+        // FIXED: Added explicit type (id: Int)
         listOf(R.id.btnSin, R.id.btnCos, R.id.btnTan, R.id.btnLog, 
                R.id.btnLn, R.id.btnSqrt, R.id.btnPi, R.id.btnE,
                R.id.btnPercent, R.id.btnFactorial, R.id.btnPower,
-               R.id.btnLParen, R.id.btnRParen).forEach { id ->
+               R.id.btnLParen, R.id.btnRParen).forEach { id: Int ->
             findViewById<Button>(id).setOnClickListener {
                 Toast.makeText(this, "Scientific mode not available", Toast.LENGTH_SHORT).show()
             }
