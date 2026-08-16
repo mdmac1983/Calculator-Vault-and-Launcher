@@ -13,7 +13,8 @@ class CalculatorActivity : AppCompatActivity() {
     private lateinit var displayText: TextView
     private lateinit var pinManager: PinManager
     private var currentInput = ""
-    private var isEnteringPin = false
+    private var lastResult = 0.0
+    private var pendingOp = ""
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,20 +49,26 @@ class CalculatorActivity : AppCompatActivity() {
         }
         
         // Operator buttons
-        findViewById<Button>(R.id.btnPlus).setOnClickListener { appendOperator("+") }
-        findViewById<Button>(R.id.btnMinus).setOnClickListener { appendOperator("-") }
-        findViewById<Button>(R.id.btnMultiply).setOnClickListener { appendOperator("×") }
-        findViewById<Button>(R.id.btnDivide).setOnClickListener { appendOperator("÷") }
-        findViewById<Button>(R.id.btnDot).setOnClickListener { appendOperator(".") }
+        findViewById<Button>(R.id.btnPlus).setOnClickListener { setOp("+") }
+        findViewById<Button>(R.id.btnMinus).setOnClickListener { setOp("-") }
+        findViewById<Button>(R.id.btnMultiply).setOnClickListener { setOp("×") }
+        findViewById<Button>(R.id.btnDivide).setOnClickListener { setOp("÷") }
+        findViewById<Button>(R.id.btnDot).setOnClickListener { 
+            if (!currentInput.contains(".")) {
+                currentInput += "."
+                updateDisplay()
+            }
+        }
         
         // Clear button
         findViewById<Button>(R.id.btnClear).setOnClickListener {
             currentInput = ""
-            isEnteringPin = false
+            pendingOp = ""
+            lastResult = 0.0
             updateDisplay()
         }
         
-        // Equals button - triggers vault unlock
+        // Equals button - triggers vault unlock OR calculate
         findViewById<Button>(R.id.btnEquals).setOnClickListener {
             checkPinAndUnlock()
         }
@@ -72,49 +79,74 @@ class CalculatorActivity : AppCompatActivity() {
                R.id.btnPercent, R.id.btnFactorial, R.id.btnPower,
                R.id.btnLParen, R.id.btnRParen).forEach { id ->
             findViewById<Button>(id).setOnClickListener {
-                Toast.makeText(this, "Function not available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Scientific mode not available", Toast.LENGTH_SHORT).show()
             }
         }
     }
     
-    private fun appendOperator(op: String) {
-        currentInput += op
-        updateDisplay()
+    private fun setOp(op: String) {
+        if (currentInput.isNotEmpty()) {
+            if (pendingOp.isNotEmpty()) {
+                calculate()
+            } else {
+                lastResult = currentInput.toDoubleOrNull() ?: 0.0
+            }
+            pendingOp = op
+            currentInput = ""
+        }
+    }
+    
+    private fun calculate() {
+        val current = currentInput.toDoubleOrNull() ?: return
+        lastResult = when (pendingOp) {
+            "+" -> lastResult + current
+            "-" -> lastResult - current
+            "×" -> lastResult * current
+            "÷" -> if (current != 0.0) lastResult / current else 0.0
+            else -> current
+        }
+        currentInput = ""
+        pendingOp = ""
     }
     
     private fun updateDisplay() {
-        displayText.text = if (currentInput.isEmpty()) "0" else currentInput
+        val display = if (currentInput.isEmpty()) {
+            if (lastResult != 0.0) formatNumber(lastResult) else "0"
+        } else {
+            currentInput
+        }
+        displayText.text = display
+    }
+    
+    private fun formatNumber(num: Double): String {
+        return if (num == num.toLong().toDouble()) {
+            num.toLong().toString()
+        } else {
+            num.toString()
+        }
     }
     
     private fun checkPinAndUnlock() {
+        // First try as PIN
         if (pinManager.validatePin(currentInput)) {
-            // PIN correct - launch vault
             val intent = Intent(this, LauncherActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
-        } else {
-            // PIN incorrect - show error and calculate if valid expression
-            try {
-                val result = evaluateExpression(currentInput)
-                currentInput = result.toString()
-                updateDisplay()
-            } catch (e: Exception) {
-                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
-                currentInput = ""
-                updateDisplay()
-            }
+            return
         }
-    }
-    
-    private fun evaluateExpression(expression: String): Double {
-        // Simple expression evaluator for calculator functionality
-        return try {
-            val cleanExpr = expression.replace("×", "*").replace("÷", "/")
-            val engine = javax.script.ScriptEngineManager().getEngineByName("JavaScript")
-            engine.eval(cleanExpr).toString().toDouble()
-        } catch (e: Exception) {
-            0.0
+        
+        // Otherwise calculate if valid expression
+        if (pendingOp.isNotEmpty() && currentInput.isNotEmpty()) {
+            calculate()
+            updateDisplay()
+        } else if (currentInput.isNotEmpty()) {
+            // Single number - just show it
+            lastResult = currentInput.toDoubleOrNull() ?: 0.0
+            currentInput = ""
+            updateDisplay()
+        } else {
+            Toast.makeText(this, "Enter PIN or expression", Toast.LENGTH_SHORT).show()
         }
     }
 }
