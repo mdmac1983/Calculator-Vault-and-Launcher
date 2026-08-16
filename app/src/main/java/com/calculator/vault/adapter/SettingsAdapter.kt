@@ -7,31 +7,31 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.calculator.vault.R
-import com.calculator.vault.fragment.SettingsFragment
 
 class SettingsAdapter(
-    private val settings: List<SettingsFragment.SettingItem>,
-    private val onClick: (SettingsFragment.SettingItem) -> Unit
-) : RecyclerView.Adapter<SettingsAdapter.SettingViewHolder>() {
+    private val items: List<SettingItem>,
+    private val onClick: (SettingItem) -> Unit
+) : RecyclerView.Adapter<SettingsAdapter.ViewHolder>() {
 
-    class SettingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    data class SettingItem(val icon: Int, val title: String)
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView = view.findViewById(R.id.settingIcon)
         val title: TextView = view.findViewById(R.id.settingTitle)
-        val value: TextView = view.findViewById(R.id.settingValue)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SettingViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_setting, parent, false)
-        return SettingViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_settings, parent, false)
+        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: SettingViewHolder, position: Int) {
-        val setting = settings[position]
-        holder.title.text = setting.title
-        holder.value.text = setting.value
-        holder.icon.setImageResource(setting.icon)
-        holder.itemView.setOnClickListener { onClick(setting) }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = items[position]
+        holder.icon.setImageResource(item.icon)
+        holder.title.text = item.title
+        holder.itemView.setOnClickListener { onClick(item) }
     }
 
-    override fun getItemCount() = settings.size
+    override fun getItemCount() = items.size
 }
