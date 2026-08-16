@@ -33,7 +33,8 @@ class PinSetupActivity : AppCompatActivity() {
             R.id.numpad6 to "6", R.id.numpad7 to "7", R.id.numpad8 to "8", R.id.numpad9 to "9"
         )
         
-        buttons.forEach { (id, digit) ->
+        // FIXED: Added explicit types
+        buttons.forEach { (id: Int, digit: String) ->
             findViewById<Button>(id).setOnClickListener {
                 if (currentPin.length < 8) {
                     currentPin += digit
