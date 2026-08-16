@@ -1,5 +1,6 @@
-package com.calculator.vault.fragment
+package com.calculator.vault.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,70 +9,52 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calculator.vault.R
-import com.calculator.vault.adapter.PasswordAdapter
-import com.calculator.vault.database.VaultDatabase
-import com.calculator.vault.model.PasswordEntry
+import com.calculator.vault.data.PasswordEntry
+import com.calculator.vault.data.VaultDatabase
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 
 class PasswordsFragment : Fragment() {
     
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PasswordAdapter
-    private lateinit var categoryTabs: TabLayout
     
-    private val categories = listOf("All", "Website", "Banking", "Credit Card", "Contacts")
-    
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_passwords, container, false)
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        categoryTabs = view.findViewById(R.id.categoryTabs)
-        categories.forEach { categoryTabs.addTab(categoryTabs.newTab().setText(it)) }
-        
         recyclerView = view.findViewById(R.id.passwordsRecycler)
         recyclerView.layoutManager = LinearLayoutManager(context)
         
-        adapter = PasswordAdapter(emptyList()) { entry ->
-            showPasswordDetails(entry)
-        }
-        recyclerView.adapter = adapter
-        
-        view.findViewById<FloatingActionButton>(R.id.addPasswordFab).setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.fabAddPassword).setOnClickListener {
             showAddPasswordDialog()
         }
         
-        categoryTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                loadPasswords(tab?.position ?: 0)
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-        
-        loadPasswords(0)
+        loadPasswords()
     }
     
-    private fun loadPasswords(categoryIndex: Int) {
-        val db = VaultDatabase.getInstance(requireContext())
-        val liveData = if (categoryIndex == 0) {
-            db.passwordDao().getAllPasswords()
-        } else {
-            db.passwordDao().getPasswordsByCategory(categories[categoryIndex].uppercase())
-        }
-        
-        liveData.observe(viewLifecycleOwner) { passwords ->
-            adapter.updatePasswords(passwords)
+    private fun loadPasswords() {
+        lifecycleScope.launch {
+            val passwords = VaultDatabase.getInstance(requireContext())
+                .passwordDao()
+                .getAllPasswords()
+            
+            adapter = PasswordAdapter(passwords) { entry ->
+                showPasswordOptions(entry)
+            }
+            recyclerView.adapter = adapter
         }
     }
     
@@ -90,7 +73,7 @@ class PasswordsFragment : Fragment() {
         
         AlertDialog.Builder(requireContext())
             .setTitle("Add Password")
-            .setView(view)
+            .setView(view as android.view.View)
             .setPositiveButton("Save") { _, _ ->
                 val entry = PasswordEntry(
                     category = categorySpinner.selectedItem.toString().uppercase(),
@@ -103,18 +86,32 @@ class PasswordsFragment : Fragment() {
                 lifecycleScope.launch {
                     VaultDatabase.getInstance(requireContext()).passwordDao().insert(entry)
                     Toast.makeText(context, "Password saved", Toast.LENGTH_SHORT).show()
+                    loadPasswords()
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
     
-    private fun showPasswordDetails(entry: PasswordEntry) {
-        // Show password details dialog
+    private fun showPasswordOptions(entry: PasswordEntry) {
         AlertDialog.Builder(requireContext())
             .setTitle(entry.title)
-            .setMessage("Username: ${entry.username}\nPassword: ${entry.password}")
-            .setPositiveButton("OK", null)
+            .setItems(arrayOf("Copy Password", "Delete")) { _, which ->
+                when (which) {
+                    0 -> {
+                        val clipboard = requireContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        val clip = android.content.ClipData.newPlainText("password", entry.password)
+                        clipboard.setPrimaryClip(clip)
+                        Toast.makeText(context, "Password copied", Toast.LENGTH_SHORT).show()
+                    }
+                    1 -> {
+                        lifecycleScope.launch {
+                            VaultDatabase.getInstance(requireContext()).passwordDao().delete(entry)
+                            loadPasswords()
+                        }
+                    }
+                }
+            }
             .show()
     }
 }
