@@ -1,6 +1,6 @@
-package com.calculator.vault.fragment
+package com.calculator.vault.ui
 
-import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,21 +9,24 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calculator.vault.R
-import com.calculator.vault.adapter.HiddenAppAdapter
-import com.calculator.vault.database.VaultDatabase
-import com.calculator.vault.model.HiddenApp
+import com.calculator.vault.data.HiddenApp
+import com.calculator.vault.data.VaultDatabase
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 class HiddenAppsFragment : Fragment() {
     
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: HiddenAppAdapter
+    private lateinit var adapter: HiddenAppsAdapter
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_hidden_apps, container, false)
     }
     
@@ -31,16 +34,9 @@ class HiddenAppsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         recyclerView = view.findViewById(R.id.hiddenAppsRecycler)
-        recyclerView.layoutManager = GridLayoutManager(context, 4)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         
-        adapter = HiddenAppAdapter(emptyList(), { app ->
-            launchApp(app.packageName)
-        }, { app ->
-            removeFromHidden(app)
-        })
-        recyclerView.adapter = adapter
-        
-        view.findViewById<FloatingActionButton>(R.id.addHiddenFab).setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.fabAddApp).setOnClickListener {
             showAppPicker()
         }
         
@@ -48,53 +44,53 @@ class HiddenAppsFragment : Fragment() {
     }
     
     private fun loadHiddenApps() {
-        VaultDatabase.getInstance(requireContext()).hiddenAppDao()
-            .getAllHiddenApps()
-            .observe(viewLifecycleOwner) { apps ->
-                adapter.updateApps(apps)
-            }
-    }
-    
-    private fun launchApp(packageName: String) {
-        val intent = requireContext().packageManager.getLaunchIntentForPackage(packageName)
-        if (intent != null) {
-            startActivity(intent)
-        } else {
-            Toast.makeText(context, "Cannot launch app", Toast.LENGTH_SHORT).show()
-        }
-    }
-    
-    private fun removeFromHidden(app: HiddenApp) {
         lifecycleScope.launch {
-            VaultDatabase.getInstance(requireContext()).hiddenAppDao().delete(app)
-            Toast.makeText(context, "Removed from hidden", Toast.LENGTH_SHORT).show()
+            val apps = VaultDatabase.getInstance(requireContext())
+                .hiddenAppDao()
+                .getAllHiddenApps()
+            
+            adapter = HiddenAppsAdapter(apps) { app ->
+                unhideApp(app)
+            }
+            recyclerView.adapter = adapter
         }
     }
     
     private fun showAppPicker() {
         val pm = requireContext().packageManager
-        val intent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_LAUNCHER)
-        }
-        
-        val apps = pm.queryIntentActivities(intent, 0)
-            .filter { it.activityInfo.packageName != requireContext().packageName }
+        val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
+            .filter { it.flags and ApplicationInfo.FLAG_SYSTEM == 0 }
             .sortedBy { it.loadLabel(pm).toString() }
         
         val appNames = apps.map { it.loadLabel(pm).toString() }.toTypedArray()
         
-        AlertDialog.Builder(requireContext())
-            .setTitle("Add to Hidden Apps")
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Select App to Hide")
             .setItems(appNames) { _, which ->
-                val app = apps[which]
-                val hiddenApp = HiddenApp(
-                    packageName = app.activityInfo.packageName,
-                    appName = app.loadLabel(pm).toString()
-                )
-                lifecycleScope.launch {
-                    VaultDatabase.getInstance(requireContext()).hiddenAppDao().insert(hiddenApp)
-                }
+                val selected = apps[which]
+                hideApp(selected)
             }
             .show()
+    }
+    
+    private fun hideApp(appInfo: ApplicationInfo) {
+        val hiddenApp = HiddenApp(
+            packageName = appInfo.packageName,
+            appName = appInfo.loadLabel(requireContext().packageManager).toString()
+        )
+        
+        lifecycleScope.launch {
+            VaultDatabase.getInstance(requireContext()).hiddenAppDao().insert(hiddenApp)
+            Toast.makeText(context, "App hidden", Toast.LENGTH_SHORT).show()
+            loadHiddenApps()
+        }
+    }
+    
+    private fun unhideApp(app: HiddenApp) {
+        lifecycleScope.launch {
+            VaultDatabase.getInstance(requireContext()).hiddenAppDao().delete(app)
+            Toast.makeText(context, "App unhidden", Toast.LENGTH_SHORT).show()
+            loadHiddenApps()
+        }
     }
 }
