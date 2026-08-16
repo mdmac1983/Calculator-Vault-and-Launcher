@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Calculator</string>
+    
+    <!-- Calculator -->
+    <string name="calculator_display_default">0</string>
+    
+    <!-- Vault Tabs -->
+    <string name="tab_files">Files</string>
+    <string name="tab_passwords">Passwords</string>
+    <string name="tab_planner">Planner</string>
+    <string name="tab_hidden_apps">Hidden Apps</string>
+    <string name="tab_settings">Settings</string>
+    
+    <!-- PIN -->
+    <string name="pin_setup_title">Create a PIN</string>
+    <string name="pin_setup_subtitle">Enter 4-8 digits for vault access</string>
+    <string name="pin_confirm_title">Confirm PIN</string>
+    <string name="pin_error_short">PIN must be at least 4 digits</string>
+    <string name="pin_error_mismatch">PINs do not match</string>
+    <string name="pin_error_incorrect">Incorrect PIN</string>
+    
+    <!-- Files -->
+    <string name="files_import">Import File</string>
+    <string name="files_export">Export</string>
+    <string name="files_delete">Delete</string>
+    <string name="files_empty">No files in vault</string>
+    
+    <!-- Passwords -->
+    <string name="password_add">Add Password</string>
+    <string name="password_edit">Edit Password</string>
+    <string name="password_delete">Delete Password</string>
+    <string name="password_title_hint">Title (e.g., Google)</string>
+    <string name="password_username_hint">Username / Email</string>
+    <string name="password_password_hint">Password</string>
+    <string name="password_notes_hint">Notes (optional)</string>
+    
+    <!-- Planner -->
+    <string name="event_add">Add Event</string>
+    <string name="event_edit">Edit Event</string>
+    <string name="event_delete">Delete Event</string>
+    <string name="event_title_hint">Event Title</string>
+    <string name="event_desc_hint">Description</string>
+    
+    <!-- Hidden Apps -->
+    <string name="hidden_add">Add to Hidden</string>
+    <string name="hidden_remove">Remove from Hidden</string>
+    <string name="hidden_empty">No hidden apps</string>
+    
+    <!-- Settings -->
+    <string name="settings_theme">UI Theme</string>
+    <string name="settings_pin">Change PIN</string>
+    <string name="settings_lock_home">Lock Home Screen</string>
+    <string name="settings_icon_pack">Icon Pack</string>
+    <string name="settings_wallpaper">Vault Wallpaper</string>
+    <string name="settings_app_name">App Name</string>
+    <string name="settings_default_launcher">Set as Default Launcher</string>
+    <string name="settings_backup">Backup &amp; Restore</string>
+    
+    <!-- Footer -->
+    <string name="vault_footer">2026 @mdmac + @orion FTF</string>
+</resources>
