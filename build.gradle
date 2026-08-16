@@ -1,6 +1,10 @@
 // Top-level build file
 buildscript {
-    ext.kotlin_version = '1.9.0'
+    ext {
+        kotlin_version = '1.9.0'
+        room_version = '2.6.0'
+        security_version = '1.1.0-alpha06'
+    }
     
     repositories {
         google()
