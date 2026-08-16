@@ -5,18 +5,20 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.calculator.vault.fragment.*
 
-class VaultPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+class VaultPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
     
-    override fun getItemCount(): Int = 5
+    private val fragments = listOf(
+        FilesFragment(),
+        PasswordsFragment(),
+        PlannerFragment(),
+        HiddenAppsFragment()
+    )
     
-    override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            0 -> FilesFragment()
-            1 -> PasswordsFragment()
-            2 -> PlannerFragment()
-            3 -> HiddenAppsFragment()
-            4 -> SettingsFragment()
-            else -> throw IllegalArgumentException("Invalid position: $position")
-        }
-    }
+    private val titles = listOf("Files", "Passwords", "Planner", "Apps")
+
+    override fun getItemCount() = fragments.size
+
+    override fun createFragment(position: Int): Fragment = fragments[position]
+    
+    fun getPageTitle(position: Int): String = titles[position]
 }
