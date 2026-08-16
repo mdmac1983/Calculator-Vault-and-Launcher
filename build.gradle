@@ -1,22 +1,14 @@
 // Top-level build file
 buildscript {
     ext.kotlin_version = '1.9.0'
-    ext.room_version = '2.6.0'
-    ext.security_version = '1.1.0-alpha06'
     
     repositories {
         google()
         mavenCentral()
     }
+    
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
     }
 }
